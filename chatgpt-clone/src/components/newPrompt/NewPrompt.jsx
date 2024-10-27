@@ -1,11 +1,13 @@
 import React ,{useRef,useEffect, useState}from 'react'
+import { useNavigate } from 'react-router-dom';
 import './newPrompt.css'
 import Upload from '../upload/Upload';
 import model from '../../lib/Gemini'
 import Markdown from 'react-markdown'
 import { IKImage } from 'imagekitio-react';
+import { useMutation, QueryClient } from '@tanstack/react-query';
 
-const NewPrompt = () => {
+const NewPrompt = ({data}) => {
 
   const [img,setImg]=useState({
     isLoading:false,
@@ -15,13 +17,55 @@ const NewPrompt = () => {
   })
 
     const endRef=useRef(null);
+    const formRef=useRef(null);
     const [question,setQuestion]= useState("");
     const [answer,setAnswer]=useState("");
+    
 
 
     useEffect(()=>{
       endRef.current.scrollIntoView({behavior:"smooth"});
-    },[answer,question,img.dbData]);
+      console.log(answer);
+    },[data,answer,question,img.dbData]);
+
+    const queryClient = new QueryClient();
+
+    const mutation = useMutation({
+      mutationFn: async() => {
+        return await fetch(`${import.meta.env.VITE_API_URL}/api/chats/${data._id}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: question.length ? question : undefined,
+            answer,
+            img: img.dbData?.filePath || undefined,
+          }),
+        }).then((res) => res.json());
+      },
+      onSuccess: () => {
+        queryClient
+          .invalidateQueries({ queryKey: ["chat", data._id] })
+          .then(() => {
+            formRef.current.reset();
+            window.location.reload();
+            // setQuestion("");
+            // setAnswer("");
+            // setImg({
+            //   isLoading: false,
+            //   error: "",
+            //   dbData: {},
+            //   aiData: {},
+            // });
+          });
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
+  
 
     const chat = model.startChat({
       history: [
@@ -35,25 +79,27 @@ const NewPrompt = () => {
         },
       ],
     });
+ 
 
+    const add= async (text,isInitial)=>{
+      if(!isInitial) setQuestion(text);
 
-    const add= async (text)=>{
-       setQuestion(text);
-      const result = await chat.sendMessageStream
-      (Object.entries(img.aiData).length ? [img.aiData,text]:[text]);
-      let accumulatedText="";
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        accumulatedText += chunkText;
-        setAnswer(accumulatedText);
-      }
+       try{
+        const result = await chat.sendMessageStream(
+          Object.entries(img.aiData).length ? [img.aiData, text] : [text]
+        );
+        let accumulatedText = "";
+        for await (const chunk of result.stream) {
+          const chunkText = chunk.text();
+          // console.log(chunkText);
+          accumulatedText += chunkText;
+          setAnswer(accumulatedText);
+        }
+        mutation.mutate();
+    }catch(err){
+      console.log(err);
+    }
   
-      setImg({
-        isLoading:false,
-        error:"",
-        dbData:{},
-        aiData:{},
-      });
     }
 
     const handleSubmit=(e)=>{
@@ -62,9 +108,20 @@ const NewPrompt = () => {
       const text=e.target.text.value;
       if(!text) return;
   
-      add(text);
+      add(text,false);
   
-     }
+     };
+
+ // we don't need this in production
+     const hasRun=useRef(false);
+     useEffect(()=>{
+      if(!hasRun.current){
+      if(data?.history?.length===1){
+        add(data.history[0].parts[0].text,true);
+      }}
+      hasRun.current=true;
+     },[]);
+
 
   return (
     <>   
@@ -84,7 +141,7 @@ const NewPrompt = () => {
         </div>
       )}
         <div className="endChat" ref={endRef}></div>
-        <form className='newForm' onSubmit={handleSubmit}>
+        <form className='newForm' onSubmit={handleSubmit} ref={formRef}>
          <Upload setImg={setImg}></Upload>
 
             <input type="file" id="file" multiple={false} hidden />

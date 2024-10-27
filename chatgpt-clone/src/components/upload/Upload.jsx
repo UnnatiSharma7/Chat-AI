@@ -41,7 +41,6 @@ const Upload = ({setImg}) => {
   const onUploadStart = (evt) => {
 
     const file = evt.target.files[0];
-    
     const reader = new FileReader();
     reader.onloadend = () => {
       setImg((prev) => ({

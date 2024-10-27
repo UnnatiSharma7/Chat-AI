@@ -1,10 +1,44 @@
 import React from 'react'
 import './dashboard.css'
+import { useMutation,QueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+
 
 const DashBoard = () => {
+
+  const navigate= useNavigate();
+  const queryClient = new QueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (text)=>{
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      })
+      return await res.json();
+    },
+    onSuccess: (id) => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['userChats'] });
+      navigate(`/dashboard/chats/${id}`);
+    },
+  });
+
+
+const handleSubmit= async(e)=>{
+  e.preventDefault();
+  const text=e.target.text.value;
+  if(!text)return ;
+ mutation.mutate(text);
+};
+
   return (
     <div className='dashboardPage'>
-      <div className="texts">
+      <div className="texts" style={{cursor:"not-allowed"}} >
         <div className="logo">
           <img src="/logo.png" alt="" />
           <h1>CHAT AI</h1>
@@ -25,8 +59,8 @@ const DashBoard = () => {
         </div>
       </div>
       <div className="formContainer">
-        <form>
-          <input type="text" placeholder='Ask me anything...'/>
+        <form onSubmit={handleSubmit} >
+          <input name="text" type="text" placeholder='Ask me anything...'/>
           <button>
             <img src="../../arrow.png" alt="" />
           </button>
