@@ -2,21 +2,35 @@ import React from 'react'
 import './chatList.css'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useAuth } from "@clerk/clerk-react";
+
 
 const ChatList = () => {
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ['userChats'],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_URL}/api/userchats`,
-        {
-          credentials:"include",
+  const { getToken } = useAuth();
 
-        }
-      ).then((res) =>
-        res.json(),
-      ),
-  })
+const { isPending, error, data } = useQuery({
+  queryKey: ["userChats"],
+  queryFn: async () => {
+    const token = await getToken();
+    // console.log("🔑 token from Clerk:", token);
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Error ${res.status}: ${text}`);
+    }
+
+    return res.json();
+  },
+});
+  console.log("backend url is:",import.meta.env.VITE_API_URL);
 
   return (
     <div className="chatList">

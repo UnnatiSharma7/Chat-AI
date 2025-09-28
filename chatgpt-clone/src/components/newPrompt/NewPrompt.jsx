@@ -1,5 +1,4 @@
-import React ,{useRef,useEffect, useState}from 'react'
-import { useNavigate } from 'react-router-dom';
+import {useRef,useEffect, useState}from 'react'
 import './newPrompt.css'
 import Upload from '../upload/Upload';
 import model from '../../lib/Gemini'
@@ -21,8 +20,7 @@ const NewPrompt = ({data}) => {
     const [question,setQuestion]= useState("");
     const [answer,setAnswer]=useState("");
     
-
-
+    
     useEffect(()=>{
       endRef.current.scrollIntoView({behavior:"smooth"});
       console.log(answer);
@@ -51,14 +49,6 @@ const NewPrompt = ({data}) => {
           .then(() => {
             formRef.current.reset();
             window.location.reload();
-            // setQuestion("");
-            // setAnswer("");
-            // setImg({
-            //   isLoading: false,
-            //   error: "",
-            //   dbData: {},
-            //   aiData: {},
-            // });
           });
       },
       onError: (err) => {
@@ -98,8 +88,7 @@ const NewPrompt = ({data}) => {
         mutation.mutate();
     }catch(err){
       console.log(err);
-    }
-  
+    } 
     }
 
     const handleSubmit=(e)=>{
@@ -121,11 +110,12 @@ const NewPrompt = ({data}) => {
       }}
       hasRun.current=true;
      },[]);
-
+    
+    console.log("img.dbData",img.dbData);
 
   return (
     <>   
-        {img.isLoading && <div className="">Loading...</div>}
+      {img.isLoading && <div className="">Loading...</div>}
       {img.dbData?.filePath && (
         <IKImage
           urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
