@@ -27,7 +27,7 @@ const DashBoard = () => {
     },
     onSuccess: (id) => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['userChats'] });
+      // queryClient.invalidateQueries({ queryKey: ['userChats'] });
       // navigate(`/dashboard/chats/${id}`);
     },
   });

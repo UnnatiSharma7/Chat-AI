@@ -53,7 +53,7 @@ const NewPrompt = ({data}) => {
           .invalidateQueries({ queryKey: ["chat", data._id] })
           .then(() => {
             formRef.current.reset();
-            window.location.reload();
+            // window.location.reload();
           });
       },
       onError: (err) => {
