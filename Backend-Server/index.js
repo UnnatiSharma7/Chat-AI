@@ -104,7 +104,6 @@ app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   try {
     const chat = await Chat.findOne({ _id: req.params.id, userId });
     if (!chat) return res.status(404).send("Chat not found");
-
     res.status(200).json(chat);
   } catch (err) {
     console.error("❌ /api/chats/:id error:", err);

@@ -38,8 +38,8 @@ const NewPrompt = ({data}) => {
           method: "PUT",
           credentials: "include",
           headers: {
-             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             question: question.length ? question : undefined,

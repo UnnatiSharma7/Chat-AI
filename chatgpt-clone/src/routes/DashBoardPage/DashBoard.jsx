@@ -17,8 +17,8 @@ const DashBoard = () => {
         method: "POST",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json",
            Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ text }),
       })
