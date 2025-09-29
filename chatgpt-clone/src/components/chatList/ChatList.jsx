@@ -13,7 +13,6 @@ const { isPending, error, data } = useQuery({
   queryKey: ["userChats"],
   queryFn: async () => {
     const token = await getToken();
-    // console.log("🔑 token from Clerk:", token);
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/userchats`,
        {
@@ -32,7 +31,6 @@ const { isPending, error, data } = useQuery({
     return res.json();
   },
 });
-  console.log("backend url is:",import.meta.env.VITE_API_URL);
 
   return (
     <div className="chatList">

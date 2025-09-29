@@ -1,12 +1,12 @@
 import './dashboard.css'
 import {  useMutation, QueryClient } from '@tanstack/react-query'
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 // import { ListModels } from '../../lib/listModels';
 import { useAuth } from "@clerk/clerk-react";
 
 const DashBoard = () => {
 
-  // const navigate= useNavigate();
+  const navigate= useNavigate();
   const queryClient = new QueryClient();
   const { getToken } = useAuth();
 
@@ -27,8 +27,8 @@ const DashBoard = () => {
     },
     onSuccess: (id) => {
       // Invalidate and refetch
-      // queryClient.invalidateQueries({ queryKey: ['userChats'] });
-      // navigate(`/dashboard/chats/${id}`);
+      queryClient.invalidateQueries({ queryKey: ['userChats'] });
+      navigate(`/dashboard/chats/${id}`);
     },
   });
 

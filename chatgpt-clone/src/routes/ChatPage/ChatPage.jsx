@@ -28,7 +28,6 @@ const { isPending, error, data } = useQuery({
   },
 });
 
-  console.log(data);
 
   return (
     <div className="chatPage">

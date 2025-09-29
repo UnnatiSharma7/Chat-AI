@@ -26,7 +26,6 @@ const NewPrompt = ({data}) => {
     
     useEffect(()=>{
       endRef.current.scrollIntoView({behavior:"smooth"});
-      console.log(answer);
     },[data,answer,question,img.dbData]);
 
     const queryClient = new QueryClient();
@@ -116,7 +115,6 @@ const NewPrompt = ({data}) => {
       hasRun.current=true;
      },[]);
     
-    console.log("img.dbData",img.dbData);
 
   return (
     <>   
