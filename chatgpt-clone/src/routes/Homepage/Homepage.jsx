@@ -13,8 +13,7 @@ const Homepage = () => {
         <h1>CHAT AI</h1>
         <h2>Supercharge your creativity and productivity</h2>
         <h3>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Placeat sint
-          dolorem doloribus, architecto dolor.
+          Your personal AI companion, powered by Gemini — ready to chat, create, and assist.
         </h3>
         <Link to="/dashboard">Get Started</Link>
       </div>
