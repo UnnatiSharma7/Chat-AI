@@ -1,21 +1,24 @@
-import React from 'react'
 import './dashboard.css'
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
-import { ListModels } from '../../lib/listModels';
+import {  useMutation, QueryClient } from '@tanstack/react-query'
+// import { useNavigate } from 'react-router-dom'
+// import { ListModels } from '../../lib/listModels';
+import { useAuth } from "@clerk/clerk-react";
 
 const DashBoard = () => {
 
-  const navigate= useNavigate();
+  // const navigate= useNavigate();
   const queryClient = new QueryClient();
+  const { getToken } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: async (text)=>{
+    mutationFn: async (text) => {
+      const token = await getToken();
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ text }),
       })
@@ -28,18 +31,6 @@ const DashBoard = () => {
       // navigate(`/dashboard/chats/${id}`);
     },
   });
-
-  // const { data: models, isLoading: modelsLoading, error: modelsError } = useQuery({
-  //   queryKey: ['availableModels'],
-  //   queryFn: ListModels,
-  // });
-
-  // // Add this line to log the models to the browser console
-  // if(models)
-  // console.log("Available Gemini model names:", models.map(m => m.name));
-  // else console.log("Models not loaded yet");
-
-  // // console.log(import.meta.env.VITE_API_URL);
 
 const handleSubmit= async(e)=>{
   e.preventDefault();
@@ -78,17 +69,6 @@ const handleSubmit= async(e)=>{
           </button>
         </form>
       </div>
-      {/* <div>
-        {modelsLoading && <div>Loading models...</div>}
-        {modelsError && <div>Error loading models</div>}
-        {models && (
-          <ul>
-            {models.map((model) => (
-              <li key={model.name}>{model.name}</li>
-            ))}
-          </ul>
-        )}
-      </div> */}
       <span className="chat-notify">Chat AI can make mistakes. Check important info.</span>
     </div>
   )

@@ -15,13 +15,15 @@ const { isPending, error, data } = useQuery({
     const token = await getToken();
     // console.log("🔑 token from Clerk:", token);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/userchats`,
+       {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       credentials: "include",
-    });
+       }
+     );
     if (!res.ok) {
       const text = await res.text();
       throw new Error(`Error ${res.status}: ${text}`);
